@@ -1,0 +1,5 @@
+export enum MovieStatus {
+  WATCHING = 'WATCHING',
+  WANT_TO_WATCH = 'WANT_TO_WATCH',
+  ALREADY_WATCHED = 'ALREADY_WATCHED',
+}

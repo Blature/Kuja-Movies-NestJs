@@ -1,8 +1,10 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { QueryFailedError } from 'typeorm';
 import { CreateMovieDto } from './dto/create-movies.dto';
 import { MovieFilterDto } from './dto/get-movie-filter.dto';
 import { Movie } from './movie.entity';
+import { MovieStatus } from './movies.-status.enum';
 import { MovieRepository } from './movies.repository';
 
 @Injectable()
@@ -24,64 +26,22 @@ export class MoviesService {
     return this.movieRepository.find();
   }
 
-  // getAllMovies(): Movie[] {
-  //   return this.movies;
-  // }
+  async getMovieById(id: string): Promise<Movie> {
+    const movie = await this.movieRepository.findOne({ where: { id } });
+    if (!movie) throw new NotFoundException(`We cant find Movie with ${id}`);
 
-  // getMovieByFilter(movieDto: MovieFilterDto): Movie[] {
-  //   const { status, search } = movieDto;
-  //   let movies = this.getAllMovies();
-  //   if (status) {
-  //     movies = movies.filter((movie) => movie.status === status);
-  //   }
-  //   if (search) {
-  //     movies = movies.filter((movie) => {
-  //       if (movie.name.toLowerCase().includes(search) || movie.description.toLowerCase().includes(search) || movie.genre.toLowerCase().includes(search)) {
-  //         return movies
-  //       }
-  //     });
-  //     return movies
+    return movie;
+  }
 
-  //   }
-  // }
-  // getMovieById(id: string): Movie {
-  //   return this.movies.find((movie) => movie.id === id);
-  // }
+  async deleteMovie(id: string): Promise<void> {
+    const movie = await this.movieRepository.findOne({ where: { id } });
+    if (!movie) throw new NotFoundException(`We cant find Movie with ${id}`);
+    await this.movieRepository.delete(id);
+  }
 
-  // createMovie(createMovieDto: CreateMovieDto): Movie {
-  //   const { name, description, genre } = createMovieDto;
-  //   const movie: Movie = {
-  //     id: uuid(),
-  //     name,
-  //     description,
-  //     genre,
-  //     status: MovieStatus.WANT_TO_WATCH,
-  //     date: Date(),
-  //   };
-
-  //   this.movies.push(movie);
-
-  //   return movie;
-  // }
-
-  // deleteMovieById(id: string) {
-  //   const findMovie = this.movies.find((movie) => movie.id === id);
-  //   if (findMovie) {
-  //     const index = this.movies.indexOf(findMovie);
-  //     this.movies.splice(index, 1);
-  //     return this.movies;
-  //   } else return 'NOT FOUND !';
-  // }
-
-  // deleteAllMovies() {
-  //   this.movies.splice(0, this.movies.length - 1);
-  //   console.log(this.movies.length, this.movies.length - 1);
-  //   return 'DONE ALL DELETED !';
-  // }
-
-  // updateMovieById(id: string, status: MovieStatus): Movie {
-  //   const movie = this.getMovieById(id);
-  //   movie.status = status;
-  //   return movie;
-  // }
+  async updateMovie(id: string, status: MovieStatus): Promise<Movie> {
+    const movie = await this.getMovieById(id);
+    movie.status = status;
+    return await this.movieRepository.save(movie);
+  }
 }

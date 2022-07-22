@@ -8,7 +8,7 @@ import {
 } from '@nestjs/common';
 
 @EntityRepository(User)
-export class UserRepository extends Repository<User> {
+export class UsersRepository extends Repository<User> {
   async createUser(authCredentialDto: AuthCredentialDto): Promise<void> {
     const { username, password } = authCredentialDto;
     const salt = await bcrypt.genSalt();

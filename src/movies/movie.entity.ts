@@ -23,7 +23,7 @@ export class Movie {
   @Column()
   date: string;
 
-  @ManyToMany((_type) => User, (user) => user.movies, { eager: true })
+  @ManyToMany((_type) => User, (user) => user.movies, { eager: false })
   @Exclude({ toPlainOnly: true })
   user: User;
 }

@@ -1,4 +1,6 @@
-import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import { Exclude } from 'class-transformer';
+import { User } from 'src/auth/user.entity';
+import { Column, Entity, ManyToMany, PrimaryGeneratedColumn } from 'typeorm';
 import { MovieStatus } from './movies.-status.enum';
 
 @Entity()
@@ -20,4 +22,8 @@ export class Movie {
 
   @Column()
   date: string;
+
+  @ManyToMany((_type) => User, (user) => user.movies, { eager: true })
+  @Exclude({ toPlainOnly: true })
+  user: User;
 }

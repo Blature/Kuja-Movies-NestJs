@@ -22,14 +22,13 @@ export class AuthService {
   ): Promise<{ accessToken: string }> {
     const { username, password } = authCredentialDto;
     const user = await this.usersRepository.findOne({ username });
+
     if (user && (await bcrypt.compare(password, user.password))) {
       const payload: JwtPayload = { username };
       const accessToken: string = await this.jwtService.sign(payload);
       return { accessToken };
     } else {
-      throw new UnauthorizedException(
-        'Your Username or Password is Incorrect !',
-      );
+      throw new UnauthorizedException('Please check your login credentials !');
     }
   }
 }

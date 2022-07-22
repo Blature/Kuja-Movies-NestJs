@@ -7,15 +7,19 @@ import {
   Patch,
   Post,
   Query,
+  UseGuards,
 } from '@nestjs/common';
+import { AuthGuard } from '@nestjs/passport';
 import { CreateMovieDto } from './dto/create-movies.dto';
 import { MovieFilterDto } from './dto/get-movie-filter.dto';
 import { UpdateMovieStatus } from './dto/update-movie-status.dto';
 import { Movie } from './movie.entity';
 import { MovieStatus } from './movies.-status.enum';
 import { MoviesService } from './movies.service';
+import { PassportModule } from '@nestjs/passport';
 
 @Controller('movies')
+@UseGuards(AuthGuard())
 export class MoviesController {
   constructor(private moviesService: MoviesService) {}
 

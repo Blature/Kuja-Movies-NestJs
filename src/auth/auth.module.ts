@@ -12,14 +12,14 @@ import { UsersRepository } from './users.repository';
     TypeOrmModule.forFeature([UsersRepository]),
     PassportModule.register({ defaultStrategy: 'jwt' }),
     JwtModule.register({
-      secret: 'topSecret00',
+      secret: 'topSecret51',
       signOptions: {
         expiresIn: 3600,
       },
     }),
   ],
-  controllers: [AuthController],
   providers: [AuthService, JwtStratrgy],
+  controllers: [AuthController],
   exports: [JwtStratrgy, PassportModule],
 })
 export class AuthModule {}

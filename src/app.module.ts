@@ -12,7 +12,7 @@ import { AuthModule } from './auth/auth.module';
       port: 5432,
       username: 'postgres',
       password: '123456789',
-      database: 'Kuja_Movies',
+      database: 'Kuja-Movies',
       autoLoadEntities: true,
       synchronize: true,
     }),

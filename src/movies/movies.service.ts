@@ -1,5 +1,6 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { User } from 'src/auth/user.entity';
 import { QueryFailedError } from 'typeorm';
 import { CreateMovieDto } from './dto/create-movies.dto';
 import { MovieFilterDto } from './dto/get-movie-filter.dto';
@@ -14,33 +15,37 @@ export class MoviesService {
     private movieRepository: MovieRepository,
   ) {}
 
-  async getMovies(filterDto: MovieFilterDto): Promise<Movie[]> {
-    return this.movieRepository.getMovies(filterDto);
+  async getMovies(filterDto: MovieFilterDto, user: User): Promise<Movie[]> {
+    return this.movieRepository.getMovies(filterDto, user);
   }
 
-  createMovie(createMovieDto: CreateMovieDto): Promise<Movie> {
-    return this.movieRepository.createMovie(createMovieDto);
+  createMovie(createMovieDto: CreateMovieDto, user: User): Promise<Movie> {
+    return this.movieRepository.createMovie(createMovieDto, user);
   }
 
   async getAllMovies(): Promise<Movie[]> {
     return this.movieRepository.find();
   }
 
-  async getMovieById(id: string): Promise<Movie> {
-    const movie = await this.movieRepository.findOne({ where: { id } });
+  async getMovieById(id: string, user: User): Promise<Movie> {
+    const movie = await this.movieRepository.findOne({ where: { id, user } });
     if (!movie) throw new NotFoundException(`We cant find Movie with ${id}`);
 
     return movie;
   }
 
-  async deleteMovie(id: string): Promise<void> {
-    const movie = await this.movieRepository.findOne({ where: { id } });
+  async deleteMovie(id: string, user: User): Promise<void> {
+    const movie = await this.movieRepository.findOne({ where: { id, user } });
     if (!movie) throw new NotFoundException(`We cant find Movie with ${id}`);
-    await this.movieRepository.delete(id);
+    await this.movieRepository.delete({ id, user });
   }
 
-  async updateMovie(id: string, status: MovieStatus): Promise<Movie> {
-    const movie = await this.getMovieById(id);
+  async updateMovie(
+    id: string,
+    status: MovieStatus,
+    user: User,
+  ): Promise<Movie> {
+    const movie = await this.getMovieById(id, user);
     movie.status = status;
     return await this.movieRepository.save(movie);
   }

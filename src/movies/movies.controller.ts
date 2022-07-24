@@ -14,15 +14,15 @@ import { CreateMovieDto } from './dto/create-movies.dto';
 import { MovieFilterDto } from './dto/get-movie-filter.dto';
 import { UpdateMovieStatus } from './dto/update-movie-status.dto';
 import { Movie } from './movie.entity';
-import { MovieStatus } from './movies.-status.enum';
 import { MoviesService } from './movies.service';
-import { PassportModule } from '@nestjs/passport';
 import { GetUser } from 'src/auth/get-user.decorator';
 import { User } from 'src/auth/user.entity';
+import { Logger } from '@nestjs/common';
 
 @Controller('movies')
 @UseGuards(AuthGuard())
 export class MoviesController {
+  private logger = new Logger('MoviesController');
   constructor(private moviesService: MoviesService) {}
 
   @Get()
@@ -30,6 +30,11 @@ export class MoviesController {
     @Query() filterDto: MovieFilterDto,
     @GetUser() user: User,
   ): Promise<Movie[]> {
+    this.logger.verbose(
+      `User "${
+        user.username
+      }" retrieving all tasks!, Filters are ${JSON.stringify(filterDto)}`,
+    );
     return this.moviesService.getMovies(filterDto, user);
   }
   @Post()
@@ -37,6 +42,11 @@ export class MoviesController {
     @Body() createMovieDto: CreateMovieDto,
     @GetUser() user: User,
   ): Promise<Movie> {
+    this.logger.verbose(
+      `User with "${user.username}" Username is created ${JSON.stringify(
+        createMovieDto.name,
+      )}`,
+    );
     return this.moviesService.createMovie(createMovieDto, user);
   }
   @Get()

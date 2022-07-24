@@ -1,3 +1,4 @@
+import { InternalServerErrorException, Logger } from '@nestjs/common';
 import { User } from 'src/auth/user.entity';
 import { EntityRepository, Repository } from 'typeorm';
 import { CreateMovieDto } from './dto/create-movies.dto';
@@ -7,6 +8,8 @@ import { MovieStatus } from './movies.-status.enum';
 
 @EntityRepository(Movie)
 export class MovieRepository extends Repository<Movie> {
+  private logger = new Logger('MoviesRepository');
+
   async getMovies(filterDto: MovieFilterDto, user: User): Promise<Movie[]> {
     const { status, search } = filterDto;
 
@@ -23,8 +26,18 @@ export class MovieRepository extends Repository<Movie> {
         { search: `%${search}%` },
       );
     }
-    const movies = await query.getMany();
-    return movies;
+    try {
+      const movies = await query.getMany();
+      return movies;
+    } catch (err) {
+      this.logger.error(
+        `Failed to get Movies for user "${
+          user.username
+        }" with Filter ${JSON.stringify(filterDto)}`,
+        err.stack,
+      );
+      throw new InternalServerErrorException();
+    }
   }
 
   async createMovie(

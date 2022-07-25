@@ -1,4 +1,4 @@
-import { Injectable, UnauthorizedException } from '@nestjs/common';
+import { Injectable, Logger, UnauthorizedException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { InjectRepository } from '@nestjs/typeorm';
 import { AuthCredentialsDto } from './dto/auth-credentials.dto';
@@ -8,6 +8,7 @@ import { JwtPayload } from './jwt-payload.interface';
 
 @Injectable()
 export class AuthService {
+  private logger = new Logger('AuthService');
   constructor(
     @InjectRepository(UsersRepository)
     private usersRepository: UsersRepository,
@@ -22,17 +23,13 @@ export class AuthService {
     authCredentialDto: AuthCredentialsDto,
   ): Promise<{ accessToken: string }> {
     const { username, password } = authCredentialDto;
-    try {
-      const t = await this.usersRepository.find();
-      console.log(t);
-    } catch (err) {
-      console.log('we got error for find all', err);
-    }
+
     try {
       const user = await this.usersRepository.findOne({ username });
       if (user && (await bcrypt.compare(password, user.password))) {
         const payload: JwtPayload = { username };
         const accessToken: string = await this.jwtService.sign(payload);
+        this.logger.verbose(`"${username}" logged in!`);
         return { accessToken };
       } else {
         throw new UnauthorizedException(
@@ -40,7 +37,9 @@ export class AuthService {
         );
       }
     } catch (err) {
-      console.log('We have an error: ', err.message);
+      this.logger.error(
+        `We have an err: "${err.message}" with code: "${err.code}"`,
+      );
     }
   }
 }

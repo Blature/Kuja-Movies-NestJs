@@ -1,7 +1,6 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { User } from 'src/auth/user.entity';
-import { QueryFailedError } from 'typeorm';
+import { User } from '../auth/user.entity';
 import { CreateMovieDto } from './dto/create-movies.dto';
 import { MovieFilterDto } from './dto/get-movie-filter.dto';
 import { Movie } from './movie.entity';

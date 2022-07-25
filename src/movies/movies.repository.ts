@@ -1,5 +1,5 @@
 import { InternalServerErrorException, Logger } from '@nestjs/common';
-import { User } from 'src/auth/user.entity';
+import { User } from '../auth/user.entity';
 import { EntityRepository, Repository } from 'typeorm';
 import { CreateMovieDto } from './dto/create-movies.dto';
 import { MovieFilterDto } from './dto/get-movie-filter.dto';

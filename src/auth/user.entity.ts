@@ -1,4 +1,4 @@
-import { Movie } from 'src/movies/movie.entity';
+import { Movie } from '../movies/movie.entity';
 import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 
 @Entity()

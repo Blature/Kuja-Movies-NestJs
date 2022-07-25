@@ -15,8 +15,8 @@ import { MovieFilterDto } from './dto/get-movie-filter.dto';
 import { UpdateMovieStatus } from './dto/update-movie-status.dto';
 import { Movie } from './movie.entity';
 import { MoviesService } from './movies.service';
-import { GetUser } from 'src/auth/get-user.decorator';
-import { User } from 'src/auth/user.entity';
+import { GetUser } from '../auth/get-user.decorator';
+import { User } from '../auth/user.entity';
 import { Logger } from '@nestjs/common';
 
 @Controller('movies')

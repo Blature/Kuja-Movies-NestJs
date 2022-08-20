@@ -7,7 +7,9 @@ import {
   Patch,
   Post,
   Query,
+  UploadedFile,
   UseGuards,
+  UseInterceptors,
 } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { CreateMovieDto } from './dto/create-movies.dto';
@@ -18,6 +20,7 @@ import { MoviesService } from './movies.service';
 import { GetUser } from '../auth/get-user.decorator';
 import { User } from '../auth/user.entity';
 import { Logger } from '@nestjs/common';
+import { FileInterceptor } from '@nestjs/platform-express';
 
 @Controller('movies')
 @UseGuards(AuthGuard())
@@ -70,4 +73,11 @@ export class MoviesController {
     const { status } = updateMovieStatus;
     return this.moviesService.updateMovie(id, status, user);
   }
+
+  @Post('upload')
+  @UseInterceptors(FileInterceptor('photo', { dest: './uploads'}))
+  uploadSingle(@UploadedFile() avatar){
+    console.log(avatar);
+  }
+
 }

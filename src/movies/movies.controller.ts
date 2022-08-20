@@ -21,6 +21,8 @@ import { GetUser } from '../auth/get-user.decorator';
 import { User } from '../auth/user.entity';
 import { Logger } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
+import { diskStorage } from 'multer';
+import { editFileName } from './dto/file-name.dto';
 
 @Controller('movies')
 @UseGuards(AuthGuard())
@@ -75,9 +77,16 @@ export class MoviesController {
   }
 
   @Post('upload')
-  @UseInterceptors(FileInterceptor('photo', { dest: './uploads'}))
-  uploadSingle(@UploadedFile() avatar){
-    console.log(avatar);
+  @UseInterceptors(FileInterceptor('photo', {storage:diskStorage({
+    destination: './uploads',
+    filename: editFileName,
+  })}))
+  async uploadSingle(@UploadedFile() file){
+    const response = {
+    	originalname: file.originalname,
+    	filename: file.filename,
+    };
+    return response;
   }
 
 }
